@@ -1,3 +1,5 @@
+import { Colors } from "../../constant/colors";
+import OutlineButton from "../UI/OutlineButton";
 import { useEffect, useState } from "react";
 import { Alert, View, StyleSheet, Image, Text } from "react-native";
 import {
@@ -6,20 +8,19 @@ import {
   PermissionStatus,
 } from "expo-location";
 import {
-  useIsFocused,
   useNavigation,
   useRoute,
+  useIsFocused,
 } from "@react-navigation/native";
-
-import { Colors } from "../../constant/colors";
-import OutlineButton from "../UI/OutlineButton";
 import { getAddress, getMapPreview } from "../../util/location";
-function LocationPicker({ onPickedLocation }) {
+
+function LocationPicker({ onPickLocation }) {
   const [pickedLocation, setPickedLocation] = useState();
   const isFocused = useIsFocused();
 
   const navigation = useNavigation();
   const route = useRoute();
+
   const [locationPermissionInformation, requestPermission] =
     useForegroundPermissions();
 
@@ -40,11 +41,12 @@ function LocationPicker({ onPickedLocation }) {
           pickedLocation.lat,
           pickedLocation.lng
         );
-        onPickedLocation({ ...pickedLocation, address: address });
+        onPickLocation({ ...pickedLocation, address: address });
       }
     }
+
     handleLocation();
-  }, [pickedLocation, onPickedLocation]);
+  }, [pickedLocation, onPickLocation]);
 
   async function verifyPermissions() {
     if (
@@ -78,7 +80,6 @@ function LocationPicker({ onPickedLocation }) {
       lat: location.coords.latitude,
       lng: location.coords.longitude,
     });
-    console.log(location);
   }
 
   function pickOnMapHandler() {
@@ -88,7 +89,6 @@ function LocationPicker({ onPickedLocation }) {
   let locationPreview = <Text>No location picked yet.</Text>;
 
   if (pickedLocation) {
-    console.log(pickedLocation);
     locationPreview = (
       <Image
         style={styles.image}
@@ -106,7 +106,7 @@ function LocationPicker({ onPickedLocation }) {
         <OutlineButton icon="location" onPress={getLocationHandler}>
           Locate User
         </OutlineButton>
-        <OutlineButton icon="map" ofnPress={pickOnMapHandler}>
+        <OutlineButton icon="map" onPress={pickOnMapHandler}>
           Pick on Map
         </OutlineButton>
       </View>
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: Colors.primary100,
     borderRadius: 4,
-    zIndex: 9999,
+    overflow: "hidden",
   },
   actions: {
     flexDirection: "row",
@@ -133,7 +133,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   image: {
-    width: 100,
-    height: 100,
+    width: "100%",
+    height: "100%",
+    // borderRadius: 4
   },
 });
