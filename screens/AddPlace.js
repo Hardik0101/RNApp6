@@ -5,7 +5,7 @@ function AddPlace({ navigation }) {
   async function createPlaceHandler(place) {
     await inserrPlace(place);
     navigation.navigate("AllPlaces", {
-      place: place,
+      // place: place,
     });
   }
 
