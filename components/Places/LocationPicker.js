@@ -13,9 +13,8 @@ import {
 
 import { Colors } from "../../constant/colors";
 import OutlineButton from "../UI/OutlineButton";
-import { getMapPreview } from "../../util/location";
-
-function LocationPicker() {
+import { getAddress, getMapPreview } from "../../util/location";
+function LocationPicker({ onPickedLocation }) {
   const [pickedLocation, setPickedLocation] = useState();
   const isFocused = useIsFocused();
 
@@ -33,6 +32,19 @@ function LocationPicker() {
       setPickedLocation(mapPickedLocation);
     }
   }, [route, isFocused]);
+
+  useEffect(() => {
+    async function handleLocation() {
+      if (pickedLocation) {
+        const address = await getAddress(
+          pickedLocation.lat,
+          pickedLocation.lng
+        );
+        onPickedLocation({ ...pickedLocation, address: address });
+      }
+    }
+    handleLocation();
+  }, [pickedLocation, onPickedLocation]);
 
   async function verifyPermissions() {
     if (
@@ -94,7 +106,7 @@ function LocationPicker() {
         <OutlineButton icon="location" onPress={getLocationHandler}>
           Locate User
         </OutlineButton>
-        <OutlineButton icon="map" onPress={pickOnMapHandler}>
+        <OutlineButton icon="map" ofnPress={pickOnMapHandler}>
           Pick on Map
         </OutlineButton>
       </View>
